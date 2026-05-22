@@ -46,5 +46,4 @@ Report:
 
 - changed files
 - open question count
-- notable requirement interpretation changes
 - the next appropriate skill, usually `$requirements-workflow-resolve` or `$requirements-workflow-spec`
