@@ -41,7 +41,8 @@ If `INTERPRETATION.md` has open questions and the user has not explicitly asked 
    - Edge Cases
    - Deferred / Expansion Scope
    - Open Spec Questions
-4. Preserve existing `Open Spec Questions` unless they are answered or incorporated into the spec by the user's instruction or by requirement detail already present in `INTERPRETATION.md`.
+4. Write the build contract interactively. For each section, surface relevant information from `INTERPRETATION.md` and "Open Spec Questions", and prompt the user to write the section. Iteratively review the writing and point out issues and let the user submit another version until you determine that it's good enough. Then move on to the next section until all sections have been completed.
+5. Preserve existing `Open Spec Questions` unless they are answered or incorporated into the spec by the user's instruction or by requirement detail already present in `INTERPRETATION.md`.
 5. Do not invent product scope. If the spec needs scope not represented in `INTERPRETATION.md`, stop and tell the user to update interpretation first.
 6. Update generated status in `WORKFLOW.md`. Do not alter acceptance checklist items.
 7. Do not invoke another workflow skill automatically.
