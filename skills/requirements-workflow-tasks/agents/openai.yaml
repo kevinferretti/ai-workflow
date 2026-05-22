@@ -1,0 +1,7 @@
+interface:
+  display_name: "Requirements Workflow Tasks"
+  short_description: "Create active core task list"
+  default_prompt: "Use $requirements-workflow-tasks to build reqs/TASKS.md from reqs/PLAN.md."
+
+policy:
+  allow_implicit_invocation: false

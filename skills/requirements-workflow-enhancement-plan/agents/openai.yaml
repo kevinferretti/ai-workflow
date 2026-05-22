@@ -1,0 +1,7 @@
+interface:
+  display_name: "Requirements Workflow Enhancement Plan"
+  short_description: "Create future expansion plan"
+  default_prompt: "Use $requirements-workflow-enhancement-plan to build reqs/ENHANCEMENT_PLAN.md."
+
+policy:
+  allow_implicit_invocation: false

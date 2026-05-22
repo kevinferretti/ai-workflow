@@ -1,0 +1,7 @@
+interface:
+  display_name: "Requirements Workflow Plan"
+  short_description: "Create core implementation plan"
+  default_prompt: "Use $requirements-workflow-plan to build reqs/PLAN.md from reqs/SPEC.md."
+
+policy:
+  allow_implicit_invocation: false

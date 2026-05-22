@@ -1,0 +1,7 @@
+interface:
+  display_name: "Requirements Workflow Update"
+  short_description: "Update interpretation from new info"
+  default_prompt: "Use $requirements-workflow-update with this new requirement information:"
+
+policy:
+  allow_implicit_invocation: false

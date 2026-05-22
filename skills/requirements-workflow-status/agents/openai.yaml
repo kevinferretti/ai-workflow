@@ -1,0 +1,7 @@
+interface:
+  display_name: "Requirements Workflow Status"
+  short_description: "Report requirements workflow progress"
+  default_prompt: "Use $requirements-workflow-status to summarize this repo requirements workflow."
+
+policy:
+  allow_implicit_invocation: false

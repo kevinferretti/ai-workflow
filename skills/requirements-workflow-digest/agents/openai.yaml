@@ -1,0 +1,7 @@
+interface:
+  display_name: "Requirements Workflow Digest"
+  short_description: "Digest PRD into interpretation"
+  default_prompt: "Use $requirements-workflow-digest to digest reqs/PRD.md into reqs/INTERPRETATION.md."
+
+policy:
+  allow_implicit_invocation: false

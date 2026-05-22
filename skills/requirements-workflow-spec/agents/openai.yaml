@@ -1,0 +1,7 @@
+interface:
+  display_name: "Requirements Workflow Spec"
+  short_description: "Create SPEC from interpretation"
+  default_prompt: "Use $requirements-workflow-spec to build reqs/SPEC.md from reqs/INTERPRETATION.md."
+
+policy:
+  allow_implicit_invocation: false

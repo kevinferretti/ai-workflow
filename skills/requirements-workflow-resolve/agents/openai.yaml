@@ -1,0 +1,7 @@
+interface:
+  display_name: "Requirements Workflow Resolve"
+  short_description: "Resolve interpretation open questions"
+  default_prompt: "Use $requirements-workflow-resolve to resolve the next open requirement question."
+
+policy:
+  allow_implicit_invocation: false
