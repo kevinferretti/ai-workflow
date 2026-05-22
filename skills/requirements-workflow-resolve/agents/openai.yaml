@@ -1,6 +1,6 @@
 interface:
   display_name: "Requirements Workflow Resolve"
-  short_description: "Resolve interpretation open questions"
+  short_description: "Resolve or route interpretation questions"
   default_prompt: "Use $requirements-workflow-resolve to resolve the next open requirement question."
 
 policy:

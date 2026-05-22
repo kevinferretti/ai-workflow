@@ -39,3 +39,7 @@ TBD
 ## Deferred / Expansion Scope
 
 - TBD
+
+## Open Spec Questions
+
+- None

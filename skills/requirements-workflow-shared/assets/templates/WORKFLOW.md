@@ -6,10 +6,10 @@
 - PRD file: missing
 - Interpretation: starter
 - Open questions: 0
-- SPEC: missing
-- PLAN: missing
-- ENHANCEMENT_PLAN: missing
-- TASKS: missing
+- SPEC: starter
+- PLAN: starter
+- ENHANCEMENT_PLAN: starter
+- TASKS: starter
 - Current phase: PRD intake
 
 ## Acceptance Checklist

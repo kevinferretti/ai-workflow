@@ -1,6 +1,6 @@
 ---
 name: requirements-workflow-spec
-description: Create or update reqs/SPEC.md from reqs/INTERPRETATION.md as the product/build contract. Use when explicitly invoked with $requirements-workflow-spec after interpretation is ready for spec work.
+description: Create or update reqs/SPEC.md from reqs/INTERPRETATION.md as the product/build contract, preserving spec-owned open questions. Use when explicitly invoked with $requirements-workflow-spec after interpretation is ready for spec work.
 ---
 
 # Requirements Workflow Spec
@@ -40,9 +40,11 @@ If `INTERPRETATION.md` has open questions and the user has not explicitly asked 
    - Constraints
    - Edge Cases
    - Deferred / Expansion Scope
-4. Do not invent product scope. If the spec needs scope not represented in `INTERPRETATION.md`, stop and tell the user to update interpretation first.
-5. Update generated status in `WORKFLOW.md`. Do not alter acceptance checklist items.
-6. Do not invoke another workflow skill automatically.
+   - Open Spec Questions
+4. Preserve existing `Open Spec Questions` unless they are answered or incorporated into the spec by the user's instruction or by requirement detail already present in `INTERPRETATION.md`.
+5. Do not invent product scope. If the spec needs scope not represented in `INTERPRETATION.md`, stop and tell the user to update interpretation first.
+6. Update generated status in `WORKFLOW.md`. Do not alter acceptance checklist items.
+7. Do not invoke another workflow skill automatically.
 
 ## Output
 

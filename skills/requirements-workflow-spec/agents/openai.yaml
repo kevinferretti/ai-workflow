@@ -1,6 +1,6 @@
 interface:
   display_name: "Requirements Workflow Spec"
-  short_description: "Create SPEC from interpretation"
+  short_description: "Create SPEC and preserve spec questions"
   default_prompt: "Use $requirements-workflow-spec to build reqs/SPEC.md from reqs/INTERPRETATION.md."
 
 policy:

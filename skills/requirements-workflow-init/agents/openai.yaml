@@ -1,6 +1,6 @@
 interface:
   display_name: "Requirements Workflow Init"
-  short_description: "Create reqs workflow starter files"
+  short_description: "Create all shared reqs workflow files"
   default_prompt: "Use $requirements-workflow-init to initialize the requirements workflow in this repo."
 
 policy:

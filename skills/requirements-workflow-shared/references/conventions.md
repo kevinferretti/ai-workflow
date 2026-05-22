@@ -44,6 +44,8 @@ Use one `Open Questions` section in `INTERPRETATION.md`. Use lightweight stable 
 
 Use neutral language for unclear, incompatible, missing, or mismatched requirements. Surface the issue as a question to answer instead of adding a separate issue category.
 
+Keep `INTERPRETATION.md` open questions limited to questions that affect requirement understanding. If the user identifies an open question as belonging to a downstream artifact, move it out of `INTERPRETATION.md` and into the relevant artifact's open questions or decisions section. For spec-owned questions, use `SPEC.md` section `Open Spec Questions`. Preserve the original question ID and wording when practical, and note the source artifact.
+
 ## Change Notes
 
 When an LLM-driven update changes requirement understanding, append a short dated entry to `INTERPRETATION.md` under `Change Notes`.
