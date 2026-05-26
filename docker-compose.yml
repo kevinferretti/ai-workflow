@@ -42,7 +42,7 @@ services:
       - seccomp=unconfined
       - apparmor=unconfined
     healthcheck:
-      test: ["CMD-SHELL", "codex --version >/dev/null 2>&1 && test -d /workspace/platform && test -w /workspace/repos"]
+      test: ["CMD-SHELL", "gosu codex bash -lc 'codex --version >/dev/null 2>&1 && test -d /workspace/platform && test -w /workspace/repos'"]
       interval: 30s
       timeout: 10s
       retries: 3
