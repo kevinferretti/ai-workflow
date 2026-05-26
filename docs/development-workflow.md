@@ -54,3 +54,21 @@ git clone <repo-url>
 ```
 
 Those repos persist in the gitignored `workspace/repos` host directory.
+
+## GitLab Workflow
+
+The workspace image includes `glab` for GitLab merge requests, pipelines,
+issues, and repository metadata. Git cloning can still use plain SSH:
+
+```bash
+cd /workspace/repos
+git clone git@labs.gauntletai.com:<namespace>/<project>.git
+```
+
+For GitLab API operations, authenticate inside the workspace:
+
+```bash
+glab auth login --hostname labs.gauntletai.com
+```
+
+`glab` state persists in the gitignored `.state/glab` host directory.

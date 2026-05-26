@@ -10,7 +10,7 @@ The Compose workspace publishes no ports by default. SSH access should be to the
 
 The workspace follows OpenAI's documented dev-container pattern: Codex runs inside a container with persistent Codex configuration and `bubblewrap` available for the inner Linux sandbox. The container grants additional capabilities so Codex sandboxing can work inside Docker.
 
-Do not run untrusted repositories with broad credentials mounted into this workspace. Anything available in the workspace, including Codex auth, SSH keys, and GitHub auth, is in scope for commands run there.
+Do not run untrusted repositories with broad credentials mounted into this workspace. Anything available in the workspace, including Codex auth, SSH keys, GitHub auth, and GitLab auth, is in scope for commands run there.
 
 ## Secrets
 
@@ -18,7 +18,7 @@ Do not run untrusted repositories with broad credentials mounted into this works
 - Do not commit `.state/`.
 - Do not commit SSH keys, Codex auth, GitHub auth, cloud credentials, or API keys.
 - Prefer short-lived credentials where possible.
-- Treat `.state/codex`, `.state/gh`, and `.state/ssh` as sensitive backup material.
+- Treat `.state/codex`, `.state/gh`, `.state/glab`, and `.state/ssh` as sensitive backup material.
 - Treat `backups/*.tar.gz` as sensitive because they can contain the same auth material and private repository contents.
 
 ## Public Exposure

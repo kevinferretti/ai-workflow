@@ -11,6 +11,7 @@ runtime state:
   .env
   .state/codex
   .state/gh
+  .state/glab
   .state/ssh
   .state/commandhistory
   workspace/repos
@@ -130,6 +131,7 @@ configured_paths=(
   "${WORKSPACE_REPOS_DIR:-./workspace/repos}"
   "${WORKSPACE_CODEX_STATE_DIR:-./.state/codex}"
   "${WORKSPACE_GH_STATE_DIR:-./.state/gh}"
+  "${WORKSPACE_GLAB_STATE_DIR:-./.state/glab}"
   "${WORKSPACE_SSH_STATE_DIR:-./.state/ssh}"
   "${WORKSPACE_COMMAND_HISTORY_DIR:-./.state/commandhistory}"
 )

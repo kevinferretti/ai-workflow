@@ -12,6 +12,7 @@ fi
 mkdir -p \
   .state/codex \
   .state/gh \
+  .state/glab \
   .state/ssh \
   .state/commandhistory \
   workspace/repos

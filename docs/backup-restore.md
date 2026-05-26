@@ -5,12 +5,14 @@ Backups cover the runtime state that is intentionally not committed to git:
 - `.env`
 - `.state/codex`
 - `.state/gh`
+- `.state/glab`
 - `.state/ssh`
 - `.state/commandhistory`
 - `workspace/repos`
 
 Treat every backup archive as sensitive. It can contain Codex auth, GitHub auth,
-SSH keys, shell history, private repository contents, and prompts.
+GitLab CLI auth, SSH keys, shell history, private repository contents, and
+prompts.
 
 ## Create A Consistent Backup
 

@@ -17,6 +17,7 @@ ensure_owned_dir() {
 
 ensure_owned_dir "${codex_home}" 0700
 ensure_owned_dir "/home/${codex_user}/.config/gh" 0700
+ensure_owned_dir "/home/${codex_user}/.config/glab-cli" 0700
 ensure_owned_dir "/home/${codex_user}/.ssh" 0700
 ensure_owned_dir "${workspace_repos}" 0775
 ensure_owned_dir "/commandhistory" 0775

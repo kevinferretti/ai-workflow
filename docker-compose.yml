@@ -7,6 +7,7 @@ services:
       dockerfile: infra/workspace/Dockerfile
       args:
         CODEX_NPM_VERSION: ${CODEX_NPM_VERSION:-0.132.0}
+        GLAB_VERSION: ${GLAB_VERSION:-1.99.0}
         NODE_MAJOR: ${NODE_MAJOR:-22}
         USER_UID: ${WORKSPACE_UID:-1000}
         USER_GID: ${WORKSPACE_GID:-1000}
@@ -23,6 +24,7 @@ services:
       CODEX_HOME: /home/codex/.codex
       PLATFORM_ROOT: /workspace/platform
       WORKSPACE_REPOS: /workspace/repos
+      GLAB_SEND_TELEMETRY: "false"
       SHELL: /usr/bin/zsh
       TZ: ${TZ:-UTC}
     volumes:
@@ -30,6 +32,7 @@ services:
       - ${WORKSPACE_REPOS_DIR:-./workspace/repos}:/workspace/repos
       - ${WORKSPACE_CODEX_STATE_DIR:-./.state/codex}:/home/codex/.codex
       - ${WORKSPACE_GH_STATE_DIR:-./.state/gh}:/home/codex/.config/gh
+      - ${WORKSPACE_GLAB_STATE_DIR:-./.state/glab}:/home/codex/.config/glab-cli
       - ${WORKSPACE_SSH_STATE_DIR:-./.state/ssh}:/home/codex/.ssh
       - ${WORKSPACE_COMMAND_HISTORY_DIR:-./.state/commandhistory}:/commandhistory
     cap_add:

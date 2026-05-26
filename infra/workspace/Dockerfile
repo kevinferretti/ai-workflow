@@ -3,6 +3,7 @@ FROM ubuntu:24.04
 ARG DEBIAN_FRONTEND=noninteractive
 ARG NODE_MAJOR=22
 ARG CODEX_NPM_VERSION=0.132.0
+ARG GLAB_VERSION=1.99.0
 ARG USER_UID=1000
 ARG USER_GID=1000
 ARG TZ=UTC
@@ -61,6 +62,9 @@ RUN apt-get update \
       > /etc/apt/sources.list.d/nodesource.list \
     && apt-get update \
     && apt-get install -y --no-install-recommends nodejs \
+    && curl -fsSL -o /tmp/glab.deb "https://gitlab.com/api/v4/projects/gitlab-org%2Fcli/packages/generic/glab/${GLAB_VERSION}/glab_${GLAB_VERSION}_linux_amd64.deb" \
+    && apt-get install -y --no-install-recommends /tmp/glab.deb \
+    && rm -f /tmp/glab.deb \
     && npm install -g "@openai/codex@${CODEX_NPM_VERSION}" \
     && npm cache clean --force \
     && apt-get clean \
@@ -82,7 +86,7 @@ RUN existing_group="$(getent group "${USER_GID}" | cut -d: -f1 || true)" \
     && chmod 0440 /etc/sudoers.d/codex \
     && install -d -m 0755 -o codex -g codex /home/codex \
     && install -d -m 0775 -o codex -g codex /workspace /workspace/repos /commandhistory \
-    && install -d -m 0700 -o codex -g codex /home/codex/.codex /home/codex/.config/gh /home/codex/.ssh \
+    && install -d -m 0700 -o codex -g codex /home/codex/.codex /home/codex/.config/gh /home/codex/.config/glab-cli /home/codex/.ssh \
     && touch /commandhistory/.bash_history /commandhistory/.zsh_history \
     && chown codex:codex /commandhistory/.bash_history /commandhistory/.zsh_history
 

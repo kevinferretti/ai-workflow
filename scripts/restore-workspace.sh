@@ -120,7 +120,7 @@ if [ "${#conflicts[@]}" -gt 0 ]; then
   printf '  %s\n' "${conflicts[@]}"
 fi
 echo "Runtime paths to restore:"
-for target in ".env" ".state/codex" ".state/gh" ".state/ssh" ".state/commandhistory" "workspace/repos"; do
+for target in ".env" ".state/codex" ".state/gh" ".state/glab" ".state/ssh" ".state/commandhistory" "workspace/repos"; do
   if grep -Eq "^${target//\./\\.}($|/)" "${members}"; then
     echo "  ${target}"
   fi
