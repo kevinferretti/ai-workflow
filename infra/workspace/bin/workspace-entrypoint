@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+codex_user="codex"
+codex_home="${CODEX_HOME:-/home/${codex_user}/.codex}"
+platform_root="${PLATFORM_ROOT:-/workspace/platform}"
+workspace_repos="${WORKSPACE_REPOS:-/workspace/repos}"
+
+ensure_owned_dir() {
+  local path="$1"
+  local mode="$2"
+
+  mkdir -p "${path}"
+  chmod "${mode}" "${path}" || true
+  chown -R "${codex_user}:${codex_user}" "${path}"
+}
+
+ensure_owned_dir "${codex_home}" 0700
+ensure_owned_dir "/home/${codex_user}/.config/gh" 0700
+ensure_owned_dir "/home/${codex_user}/.ssh" 0700
+ensure_owned_dir "${workspace_repos}" 0775
+ensure_owned_dir "/commandhistory" 0775
+
+if [ -d "${codex_home}/tmp" ]; then
+  find "${codex_home}/tmp" -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
+fi
+install -d -m 0700 -o "${codex_user}" -g "${codex_user}" "${codex_home}/tmp"
+
+touch /commandhistory/.bash_history /commandhistory/.zsh_history
+chown "${codex_user}:${codex_user}" /commandhistory/.bash_history /commandhistory/.zsh_history
+
+ln -sf /commandhistory/.bash_history "/home/${codex_user}/.bash_history"
+ln -sf /commandhistory/.zsh_history "/home/${codex_user}/.zsh_history"
+chown -h "${codex_user}:${codex_user}" "/home/${codex_user}/.bash_history" "/home/${codex_user}/.zsh_history"
+
+if [ ! -f "${codex_home}/config.toml" ]; then
+  install -m 0600 -o "${codex_user}" -g "${codex_user}" /etc/codex/config.toml "${codex_home}/config.toml"
+fi
+
+if [ -d "${platform_root}/skills" ]; then
+  gosu "${codex_user}" install-platform-skills
+else
+  echo "WARNING: platform skills directory not found at ${platform_root}/skills" >&2
+fi
+
+exec gosu "${codex_user}" "$@"

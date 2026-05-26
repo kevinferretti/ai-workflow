@@ -1,0 +1,23 @@
+#:schema https://developers.openai.com/codex/config-schema.json
+
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+web_search = "cached"
+history.persistence = "save-all"
+check_for_update_on_startup = false
+project_root_markers = ["AGENTS.md", ".git"]
+
+[sandbox_workspace_write]
+writable_roots = ["/workspace/platform", "/workspace/repos"]
+network_access = true
+
+[features]
+multi_agent = true
+shell_snapshot = true
+unified_exec = true
+
+[projects."/workspace/platform"]
+trust_level = "trusted"
+
+[projects."/workspace/repos"]
+trust_level = "trusted"

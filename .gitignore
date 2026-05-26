@@ -2,3 +2,7 @@
 Thumbs.db
 *.tmp
 *.log
+/.env
+/.state/
+/workspace/
+/backups/
