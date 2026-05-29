@@ -76,7 +76,12 @@ migrate_dir_to_link() {
 
   if [ -L "${link}" ]; then
     if [ "$(realpath -m "${link}")" != "${target}" ]; then
-      fail "${link} points to $(realpath -m "${link}"), expected ${target}"
+      current_target="$(realpath -m "${link}")"
+      if [ -e "${current_target}" ]; then
+        fail "${link} points to ${current_target}, expected ${target}"
+      fi
+      rm -f "${link}"
+      ln -s "${target}" "${link}"
     fi
     return
   fi
@@ -106,7 +111,12 @@ migrate_file_to_link() {
 
   if [ -L "${link}" ]; then
     if [ "$(realpath -m "${link}")" != "${target}" ]; then
-      fail "${link} points to $(realpath -m "${link}"), expected ${target}"
+      current_target="$(realpath -m "${link}")"
+      if [ -e "${current_target}" ]; then
+        fail "${link} points to ${current_target}, expected ${target}"
+      fi
+      rm -f "${link}"
+      ln -s "${target}" "${link}"
     fi
     return
   fi
@@ -165,6 +175,11 @@ elif grep -F '/workspace/platform' "${codex_config}" >/dev/null && ! grep -F "${
   cp "${codex_config}" "${backup_config}"
   write_codex_config "${codex_config}"
   echo "Replaced container Codex config; previous config saved at ${backup_config}"
+elif ! grep -F "${repo_root}" "${codex_config}" >/dev/null || ! grep -F "${workspace_repos}" "${codex_config}" >/dev/null; then
+  backup_config="${codex_config}.pre-path-migration-$(date -u +%Y%m%dT%H%M%SZ)"
+  cp "${codex_config}" "${backup_config}"
+  write_codex_config "${codex_config}"
+  echo "Replaced stale Codex path config; previous config saved at ${backup_config}"
 else
   grep -F "${repo_root}" "${codex_config}" >/dev/null || warn "Codex config does not mention ${repo_root}"
   grep -F "${workspace_repos}" "${codex_config}" >/dev/null || warn "Codex config does not mention ${workspace_repos}"
