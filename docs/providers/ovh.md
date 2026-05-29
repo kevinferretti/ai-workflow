@@ -42,8 +42,8 @@ On the VPS:
 ```bash
 sudo apt-get update
 sudo apt-get install -y git
-git clone <PLATFORM_REPO_URL> ~/requirements-workflow-skills
-cd ~/requirements-workflow-skills
+git clone <PLATFORM_REPO_URL> ~/ai-workflow
+cd ~/ai-workflow
 bash scripts/bootstrap-ubuntu-host.sh
 ```
 
@@ -64,7 +64,7 @@ ssh codex@<TAILSCALE_IP>
 On the VPS over Tailscale as the workspace user, use the seeded repo copy:
 
 ```bash
-cd ~/requirements-workflow-skills
+cd ~/ai-workflow
 cp .env.example .env
 bash scripts/start-workspace.sh
 bash scripts/check-host.sh
@@ -95,13 +95,13 @@ codex@<TAILSCALE_IP>
 Open the platform repo at:
 
 ```text
-~/requirements-workflow-skills
+~/ai-workflow
 ```
 
 Additional repos should live under:
 
 ```text
-~/requirements-workflow-skills/workspace/repos
+~/ai-workflow/workspace/repos
 ```
 
 ## Security Baseline

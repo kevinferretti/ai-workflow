@@ -44,7 +44,7 @@ ssh codex@<TAILSCALE_IP>
 Use the seeded repo copy, then run:
 
 ```bash
-cd ~/requirements-workflow-skills
+cd ~/ai-workflow
 cp .env.example .env
 bash scripts/start-workspace.sh
 bash scripts/check-host.sh

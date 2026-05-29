@@ -148,7 +148,7 @@ if [ -f "${HOME}/.ssh/authorized_keys" ]; then
 fi
 
 workspace_home="$(getent passwd "${workspace_user}" | cut -d: -f6)"
-workspace_repo="${workspace_home}/requirements-workflow-skills"
+workspace_repo="${workspace_home}/ai-workflow"
 if [ ! -e "${workspace_repo}" ]; then
   sudo install -d -m 0755 -o "${workspace_user}" -g "${workspace_user}" "${workspace_repo}"
   sudo rsync -a \
@@ -175,7 +175,7 @@ Next steps:
 2. Connect as the workspace user over Tailscale:
    ssh ${workspace_user}@<TAILSCALE_IP>
 3. Prepare the seeded workspace repo:
-   cd ~/requirements-workflow-skills
+   cd ~/ai-workflow
    cp .env.example .env
    bash scripts/start-workspace.sh
    bash scripts/check-host.sh

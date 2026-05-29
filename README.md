@@ -22,8 +22,8 @@ On a fresh Ubuntu VM:
 ```bash
 sudo apt-get update
 sudo apt-get install -y git
-git clone <PLATFORM_REPO_URL> ~/requirements-workflow-skills
-cd ~/requirements-workflow-skills
+git clone <PLATFORM_REPO_URL> ~/ai-workflow
+cd ~/ai-workflow
 bash scripts/bootstrap-ubuntu-host.sh
 ```
 
@@ -32,7 +32,7 @@ Then join the tailnet, connect as the workspace user, and prepare the repo-local
 ```bash
 sudo tailscale up --ssh
 ssh codex@<TAILSCALE_IP>
-cd ~/requirements-workflow-skills
+cd ~/ai-workflow
 cp .env.example .env
 bash scripts/start-workspace.sh
 bash scripts/check-host.sh

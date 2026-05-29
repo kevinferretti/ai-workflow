@@ -18,7 +18,7 @@ bash scripts/check-workspace.sh
 codex
 ```
 
-The platform repo usually lives at `~/requirements-workflow-skills`. Additional
+The platform repo usually lives at `~/ai-workflow`. Additional
 repos belong under `workspace/repos`.
 
 ## Terminal Workflow
