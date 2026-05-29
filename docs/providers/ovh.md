@@ -104,6 +104,9 @@ Additional repos should live under:
 ~/ai-workflow/workspace/repos
 ```
 
+For Android phone access, use Tailscale plus Termux/OpenSSH as documented in
+`docs/android-ssh.md`.
+
 ## Security Baseline
 
 - Treat public SSH as bootstrap access.

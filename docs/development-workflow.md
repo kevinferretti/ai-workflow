@@ -30,6 +30,12 @@ bash scripts/workspace-shell.sh
 codex
 ```
 
+## Android SSH Workflow
+
+For phone access, use Android Tailscale plus Termux/OpenSSH to connect to the VM
+over the tailnet, then run the normal terminal workflow. See
+`docs/android-ssh.md`.
+
 ## Updating Workflow Skills
 
 `scripts/start-workspace.sh` installs the repo's `skills/requirements-workflow-*`

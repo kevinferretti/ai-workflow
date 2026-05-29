@@ -52,6 +52,7 @@ See:
 - `docs/deploy-cloud-vm.md`
 - `docs/providers/ovh.md`
 - `docs/development-workflow.md`
+- `docs/android-ssh.md`
 - `docs/security.md`
 - `docs/backup-restore.md`
 
