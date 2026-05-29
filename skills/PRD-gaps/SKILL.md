@@ -1,6 +1,6 @@
 ---
-name: PRD-gaps
-description: Review for gaps with PRD and output findings
+name: prd-gaps
+description: Review for gaps with PRD and output findings. Only invoke when explicitly called.
 ---
 
 For the given PRD file, identify any gaps between our repo and the requirements from the PRD.
