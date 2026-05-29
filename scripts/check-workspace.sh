@@ -23,6 +23,12 @@ workspace_user="${WORKSPACE_USER:-codex}"
 to_abs() {
   local raw="$1"
   case "${raw}" in
+    "~")
+      realpath -m "${HOME}"
+      ;;
+    "~/"*)
+      realpath -m "${HOME}/${raw#~/}"
+      ;;
     /*)
       realpath -m "${raw}"
       ;;
@@ -32,15 +38,29 @@ to_abs() {
   esac
 }
 
-workspace_repos="$(to_abs "${WORKSPACE_REPOS_DIR:-./workspace/repos}")"
-codex_state="$(to_abs "${WORKSPACE_CODEX_STATE_DIR:-./.state/codex}")"
-gh_state="$(to_abs "${WORKSPACE_GH_STATE_DIR:-./.state/gh}")"
-glab_state="$(to_abs "${WORKSPACE_GLAB_STATE_DIR:-./.state/glab}")"
-ssh_state="$(to_abs "${WORKSPACE_SSH_STATE_DIR:-./.state/ssh}")"
-history_state="$(to_abs "${WORKSPACE_COMMAND_HISTORY_DIR:-./.state/commandhistory}")"
+if [ -n "${WORKSPACE_ROOT:-}" ]; then
+  workspace_root="$(to_abs "${WORKSPACE_ROOT}")"
+elif [ -n "${WORKSPACE_REPOS_DIR:-}" ] \
+  || [ -n "${WORKSPACE_CODEX_STATE_DIR:-}" ] \
+  || [ -n "${WORKSPACE_GH_STATE_DIR:-}" ] \
+  || [ -n "${WORKSPACE_GLAB_STATE_DIR:-}" ] \
+  || [ -n "${WORKSPACE_SSH_STATE_DIR:-}" ] \
+  || [ -n "${WORKSPACE_COMMAND_HISTORY_DIR:-}" ]; then
+  workspace_root="${repo_root}"
+else
+  workspace_root="$(to_abs "~/workspace")"
+fi
+
+workspace_repos="$(to_abs "${WORKSPACE_REPOS_DIR:-${workspace_root}/repos}")"
+codex_state="$(to_abs "${WORKSPACE_CODEX_STATE_DIR:-${workspace_root}/state/codex}")"
+gh_state="$(to_abs "${WORKSPACE_GH_STATE_DIR:-${workspace_root}/state/gh}")"
+glab_state="$(to_abs "${WORKSPACE_GLAB_STATE_DIR:-${workspace_root}/state/glab}")"
+ssh_state="$(to_abs "${WORKSPACE_SSH_STATE_DIR:-${workspace_root}/state/ssh}")"
+history_state="$(to_abs "${WORKSPACE_COMMAND_HISTORY_DIR:-${workspace_root}/state/commandhistory}")"
 
 echo "Workspace user: $(id -un)"
 echo "Platform repo: ${repo_root}"
+echo "Workspace root: ${workspace_root}"
 echo "Additional repos: ${workspace_repos}"
 
 for command_name in codex node npm git python3 rg gh glab zsh; do

@@ -31,14 +31,16 @@ runners.
 
 ## Persistence
 
-Runtime state is kept in gitignored repo-local directories:
+Runtime state is kept under a single managed host workspace root, `~/workspace`
+by default:
 
-- `.state/codex`: Codex config, auth, history, logs, and installed skills.
-- `.state/gh`: GitHub CLI state.
-- `.state/glab`: GitLab CLI state.
-- `.state/ssh`: SSH keys/config for the workspace user.
-- `.state/commandhistory`: shell history.
-- `workspace/repos`: additional working repositories.
+- `~/workspace/repos`: additional working repositories.
+- `~/workspace/state/codex`: Codex config, auth, history, logs, and installed skills.
+- `~/workspace/state/gh`: GitHub CLI state.
+- `~/workspace/state/glab`: GitLab CLI state.
+- `~/workspace/state/ssh`: SSH keys/config for the workspace user.
+- `~/workspace/state/commandhistory`: shell history.
+- `~/workspace/backups`: local backup archives and restore metadata.
 
 `scripts/start-workspace.sh` links the workspace user's home paths to those
 directories, including `~/.codex`, `~/.config/gh`, `~/.config/glab-cli`, and
@@ -61,4 +63,4 @@ from `.env`. The workspace setup script installs this repo's
 `requirements-workflow-*` skill directories into `$CODEX_HOME/skills`.
 
 The generated Codex config uses `workspace-write` sandboxing, stores history,
-and trusts the platform repo plus `workspace/repos`.
+and trusts the platform repo plus `~/workspace/repos`.

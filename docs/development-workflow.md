@@ -12,14 +12,14 @@ bash scripts/start-workspace.sh
 bash scripts/check-workspace.sh
 ```
 
-5. Run Codex from the repo or from `workspace/repos`:
+5. Run Codex from the platform repo or from `~/workspace/repos`:
 
 ```bash
 codex
 ```
 
-The platform repo usually lives at `~/ai-workflow`. Additional
-repos belong under `workspace/repos`.
+The platform repo usually lives at `~/ai-workflow`. Additional repos belong
+under `~/workspace/repos`.
 
 ## Terminal Workflow
 
@@ -52,12 +52,12 @@ Start a new Codex thread after changing skills so discovery can refresh.
 Clone additional repos inside the workspace repo directory:
 
 ```bash
-cd workspace/repos
+cd ~/workspace/repos
 git clone <repo-url>
 ```
 
-Those repos persist in the gitignored `workspace/repos` directory and are
-included in repo-defined backups.
+Those repos persist under the managed workspace root and are included in
+repo-defined backups.
 
 ## GitLab Workflow
 
@@ -65,7 +65,7 @@ The host bootstrap installs `glab` for GitLab merge requests, pipelines, issues,
 and repository metadata. Git cloning can still use plain SSH:
 
 ```bash
-cd workspace/repos
+cd ~/workspace/repos
 git clone git@labs.gauntletai.com:<namespace>/<project>.git
 ```
 
@@ -75,4 +75,4 @@ For GitLab API operations, authenticate as the workspace user:
 glab auth login --hostname labs.gauntletai.com
 ```
 
-`glab` state persists in the gitignored `.state/glab` directory.
+`glab` state persists in `~/workspace/state/glab` by default.

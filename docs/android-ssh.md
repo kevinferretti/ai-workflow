@@ -89,7 +89,7 @@ Use the same repo layout as the laptop workflow. Additional working repos belong
 under:
 
 ```text
-~/ai-workflow/workspace/repos
+~/workspace/repos
 ```
 
 ## If Tailscale SSH Does Not Work

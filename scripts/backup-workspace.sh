@@ -9,12 +9,12 @@ Creates a timestamped tar.gz archive containing the persistent host workspace
 runtime state:
 
   .env
-  .state/codex
-  .state/gh
-  .state/glab
-  .state/ssh
-  .state/commandhistory
-  workspace/repos
+  workspace-root/repos
+  workspace-root/state/codex
+  workspace-root/state/gh
+  workspace-root/state/glab
+  workspace-root/state/ssh
+  workspace-root/state/commandhistory
 
 By default the script refuses to back up while Codex is running for the current
 user. Use --live only when you accept a potentially inconsistent snapshot.
@@ -33,8 +33,8 @@ warn() {
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 cd "${repo_root}"
 
-backup_dir="${BACKUP_DIR:-backups}"
-backup_prefix="${BACKUP_PREFIX:-workspace}"
+backup_dir=""
+backup_prefix=""
 allow_live=0
 
 while [ "$#" -gt 0 ]; do
@@ -70,6 +70,44 @@ set -a
 . ./.env
 set +a
 
+to_abs() {
+  local raw="$1"
+  case "${raw}" in
+    "~")
+      realpath -m "${HOME}"
+      ;;
+    "~/"*)
+      realpath -m "${HOME}/${raw#~/}"
+      ;;
+    [A-Za-z]:*)
+      fail "Windows-style absolute paths are not supported on the Linux VM: ${raw}"
+      ;;
+    /*)
+      realpath -m "${raw}"
+      ;;
+    *)
+      realpath -m "${repo_root}/${raw#./}"
+      ;;
+  esac
+}
+
+if [ -n "${WORKSPACE_ROOT:-}" ]; then
+  workspace_root="$(to_abs "${WORKSPACE_ROOT}")"
+elif [ -n "${WORKSPACE_REPOS_DIR:-}" ] \
+  || [ -n "${WORKSPACE_CODEX_STATE_DIR:-}" ] \
+  || [ -n "${WORKSPACE_GH_STATE_DIR:-}" ] \
+  || [ -n "${WORKSPACE_GLAB_STATE_DIR:-}" ] \
+  || [ -n "${WORKSPACE_SSH_STATE_DIR:-}" ] \
+  || [ -n "${WORKSPACE_COMMAND_HISTORY_DIR:-}" ]; then
+  workspace_root="${repo_root}"
+else
+  workspace_root="$(to_abs "~/workspace")"
+fi
+
+workspace_root_abs="$(realpath -m "${workspace_root}")"
+backup_dir="${backup_dir:-${BACKUP_DIR:-${workspace_root_abs}/backups}}"
+backup_prefix="${backup_prefix:-${BACKUP_PREFIX:-workspace}}"
+
 codex_running=false
 if command -v pgrep >/dev/null 2>&1 && pgrep -u "$(id -u)" -x codex >/dev/null 2>&1; then
   codex_running=true
@@ -78,11 +116,8 @@ if command -v pgrep >/dev/null 2>&1 && pgrep -u "$(id -u)" -x codex >/dev/null 2
   fi
 fi
 
-repo_abs="$(realpath -m "${repo_root}")"
-
-to_repo_relative() {
+to_workspace_relative() {
   local raw="$1"
-  local candidate
   local abs
   local rel
 
@@ -92,27 +127,18 @@ to_repo_relative() {
     *$'\n'*)
       fail "path contains a newline and cannot be archived safely: ${raw}"
       ;;
-    /*)
-      candidate="${raw}"
-      ;;
-    [A-Za-z]:*)
-      fail "Windows-style absolute paths are not supported on the Linux VM: ${raw}"
-      ;;
-    *)
-      candidate="${repo_root}/${raw#./}"
-      ;;
   esac
 
-  abs="$(realpath -m "${candidate}")"
+  abs="$(to_abs "${raw}")"
   case "${abs}" in
-    "${repo_abs}")
+    "${workspace_root_abs}")
       rel="."
       ;;
-    "${repo_abs}"/*)
-      rel="${abs#${repo_abs}/}"
+    "${workspace_root_abs}"/*)
+      rel="${abs#${workspace_root_abs}/}"
       ;;
     *)
-      fail "persistent path is outside the platform repo and is not supported by this backup script: ${raw}"
+      fail "persistent path is outside WORKSPACE_ROOT (${workspace_root_abs}) and is not supported by this backup script: ${raw}"
       ;;
   esac
 
@@ -126,17 +152,16 @@ to_repo_relative() {
 }
 
 configured_paths=(
-  ".env"
-  "${WORKSPACE_REPOS_DIR:-./workspace/repos}"
-  "${WORKSPACE_CODEX_STATE_DIR:-./.state/codex}"
-  "${WORKSPACE_GH_STATE_DIR:-./.state/gh}"
-  "${WORKSPACE_GLAB_STATE_DIR:-./.state/glab}"
-  "${WORKSPACE_SSH_STATE_DIR:-./.state/ssh}"
-  "${WORKSPACE_COMMAND_HISTORY_DIR:-./.state/commandhistory}"
+  "${WORKSPACE_REPOS_DIR:-${workspace_root_abs}/repos}"
+  "${WORKSPACE_CODEX_STATE_DIR:-${workspace_root_abs}/state/codex}"
+  "${WORKSPACE_GH_STATE_DIR:-${workspace_root_abs}/state/gh}"
+  "${WORKSPACE_GLAB_STATE_DIR:-${workspace_root_abs}/state/glab}"
+  "${WORKSPACE_SSH_STATE_DIR:-${workspace_root_abs}/state/ssh}"
+  "${WORKSPACE_COMMAND_HISTORY_DIR:-${workspace_root_abs}/state/commandhistory}"
 )
 
 timestamp="$(date -u +%Y%m%dT%H%M%SZ)"
-backup_dir_abs="$(realpath -m "${backup_dir}")"
+backup_dir_abs="$(to_abs "${backup_dir}")"
 mkdir -p "${backup_dir_abs}"
 
 tmp_dir="$(mktemp -d)"
@@ -149,11 +174,11 @@ filelist="${tmp_dir}/files.txt"
 : >"${filelist}"
 
 for path in "${configured_paths[@]}"; do
-  rel="$(to_repo_relative "${path}")"
-  if [ -e "${repo_root}/${rel}" ]; then
+  rel="$(to_workspace_relative "${path}")"
+  if [ -e "${workspace_root_abs}/${rel}" ]; then
     printf '%s\n' "${rel}" >>"${filelist}"
   else
-    warn "skipping missing path: ${rel}"
+    warn "skipping missing path: workspace-root/${rel}"
   fi
 done
 
@@ -165,8 +190,10 @@ mkdir -p "${metadata_dir}"
 {
   echo "created_utc=${timestamp}"
   echo "archive_format=tar.gz"
+  echo "archive_layout=workspace-root-v2"
   echo "workspace_model=direct-host"
   echo "repo_root=${repo_root}"
+  echo "workspace_root=${workspace_root_abs}"
   echo "workspace_user=${WORKSPACE_USER:-codex}"
   echo "codex_processes_running=${codex_running}"
   echo "platform_git_branch=$(git branch --show-current 2>/dev/null || true)"
@@ -178,10 +205,11 @@ mkdir -p "${metadata_dir}"
   fi
   echo
   echo "included_paths:"
-  sed 's/^/- /' "${filelist}"
+  echo "- .env"
+  sed 's|^|- workspace-root/|' "${filelist}"
   echo
   echo "excluded_paths:"
-  echo "- .state/codex/tmp"
+  echo "- workspace-root/state/codex/tmp"
 } >"${metadata_dir}/manifest.txt"
 
 {
@@ -197,12 +225,19 @@ git status --short >"${metadata_dir}/git-status.txt" 2>/dev/null || true
 
 archive="${backup_dir_abs}/${backup_prefix}-${timestamp}.tar.gz"
 archive_tmp="${archive}.tmp"
+archive_tar="${tmp_dir}/archive.tar"
 
-tar -czf "${archive_tmp}" \
-  --exclude='.state/codex/tmp' \
-  --exclude='.state/codex/tmp/*' \
-  -C "${repo_root}" -T "${filelist}" \
+tar -cf "${archive_tar}" \
+  -C "${repo_root}" .env \
   -C "${tmp_dir}" backup-metadata
+
+tar -rf "${archive_tar}" \
+  --exclude='state/codex/tmp' \
+  --exclude='state/codex/tmp/*' \
+  --transform='s,^,workspace-root/,' \
+  -C "${workspace_root_abs}" -T "${filelist}"
+
+gzip -c "${archive_tar}" >"${archive_tmp}"
 
 mv "${archive_tmp}" "${archive}"
 chmod 0600 "${archive}" 2>/dev/null || true

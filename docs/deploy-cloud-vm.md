@@ -7,7 +7,8 @@ The first opinionated target is OVH VPS-2 running Ubuntu 24.04 LTS. Use
 
 - Ubuntu 24.04 LTS is the initial target.
 - At least 2 vCPU and 4 GB RAM for light work; use more for large builds.
-- Disk size should account for package caches, repos, `.state/`, and backups.
+- Disk size should account for package caches, `~/workspace/repos`,
+  `~/workspace/state`, and backups.
 - Inbound public access should be restricted. Prefer Tailscale SSH over public SSH.
 
 ## Bootstrap The VM
@@ -21,8 +22,8 @@ bash scripts/bootstrap-ubuntu-host.sh
 The bootstrap installs baseline development tools, Node.js, Codex CLI, GitHub
 CLI, GitLab CLI, Tailscale, and SSH. It also creates the dedicated workspace
 user from `WORKSPACE_USER`, defaulting to `codex`, and seeds the current repo
-checkout into that user's home without `.env`, `.state`, `workspace`, or
-`backups`.
+checkout into that user's home without `.env` or legacy platform-local runtime
+directories such as `.state`, `workspace`, and `backups`.
 
 Join the tailnet:
 
@@ -65,7 +66,7 @@ Run this as the workspace user:
 codex login
 ```
 
-The resulting Codex state is stored under `.state/codex`, which is gitignored
+The resulting Codex state is stored under `~/workspace/state/codex` by default
 and should be backed up as sensitive runtime state.
 
 ## Update Or Reprovision

@@ -101,7 +101,7 @@ Open the platform repo at:
 Additional repos should live under:
 
 ```text
-~/ai-workflow/workspace/repos
+~/workspace/repos
 ```
 
 For Android phone access, use Tailscale plus Termux/OpenSSH as documented in
@@ -112,8 +112,8 @@ For Android phone access, use Tailscale plus Termux/OpenSSH as documented in
 - Treat public SSH as bootstrap access.
 - Prefer Tailscale SSH for routine access.
 - Do not expose raw development, admin, SSH, or workspace services publicly by default.
-- Keep Codex, GitHub, GitLab, SSH, and shell state under `.state/`.
-- Treat `.state/` backups as sensitive because they can contain auth material.
+- Keep Codex, GitHub, GitLab, SSH, and shell state under `~/workspace/state`.
+- Treat workspace backups as sensitive because they can contain auth material.
 - Keep provider backups enabled, but do not treat them as the only restore plan.
 
 ## Provider References

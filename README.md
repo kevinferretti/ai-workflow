@@ -27,7 +27,7 @@ cd ~/ai-workflow
 bash scripts/bootstrap-ubuntu-host.sh
 ```
 
-Then join the tailnet, connect as the workspace user, and prepare the repo-local runtime state:
+Then join the tailnet, connect as the workspace user, and prepare the host workspace runtime state:
 
 ```bash
 sudo tailscale up --ssh
@@ -62,12 +62,17 @@ See:
 - `skills/`: reusable requirements workflow skills.
 - `reqs/PRD.md`: product direction for the platform MVP.
 
-Gitignored runtime state:
+Default host layout:
 
-- `.state/`
-- `workspace/`
-- `backups/`
+- `~/ai-workflow`: this platform repo.
+- `~/workspace/repos`: additional working repositories.
+- `~/workspace/state`: Codex, GitHub CLI, GitLab CLI, SSH, and shell state.
+- `~/workspace/backups`: local backup archives and restore metadata.
+
+Gitignored platform-local files:
+
 - `.env`
+- `.state/`, `workspace/`, and `backups/` for legacy or explicit local overrides.
 
 ## Requirements Workflow Skills
 

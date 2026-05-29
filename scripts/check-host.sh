@@ -51,10 +51,49 @@ if [ "$mem_mib" -lt 3800 ]; then
   warn "less than 4 GiB RAM; Codex and builds may be constrained"
 fi
 
+to_abs() {
+  local raw="$1"
+  case "${raw}" in
+    "~")
+      realpath -m "${HOME}"
+      ;;
+    "~/"*)
+      realpath -m "${HOME}/${raw#~/}"
+      ;;
+    /*)
+      realpath -m "${raw}"
+      ;;
+    *)
+      realpath -m "${repo_root}/${raw#./}"
+      ;;
+  esac
+}
+
+if [ -n "${WORKSPACE_ROOT:-}" ]; then
+  workspace_root="$(to_abs "${WORKSPACE_ROOT}")"
+elif [ -n "${WORKSPACE_REPOS_DIR:-}" ] \
+  || [ -n "${WORKSPACE_CODEX_STATE_DIR:-}" ] \
+  || [ -n "${WORKSPACE_GH_STATE_DIR:-}" ] \
+  || [ -n "${WORKSPACE_GLAB_STATE_DIR:-}" ] \
+  || [ -n "${WORKSPACE_SSH_STATE_DIR:-}" ] \
+  || [ -n "${WORKSPACE_COMMAND_HISTORY_DIR:-}" ]; then
+  workspace_root="${repo_root}"
+else
+  workspace_root="$(to_abs "~/workspace")"
+fi
+
 available_mib="$(df -Pm . | awk 'NR == 2 { print $4 }')"
 echo "Disk available at repo root: ${available_mib} MiB"
 if [ "$available_mib" -lt 20000 ]; then
-  warn "less than 20 GiB free at repo root; package caches and repos may fill the disk"
+  warn "less than 20 GiB free at repo root"
+fi
+
+workspace_available_mib="$(df -Pm "${workspace_root}" 2>/dev/null | awk 'NR == 2 { print $4 }')"
+if [ -n "${workspace_available_mib}" ]; then
+  echo "Disk available at workspace root: ${workspace_available_mib} MiB"
+  if [ "$workspace_available_mib" -lt 20000 ]; then
+    warn "less than 20 GiB free at workspace root; package caches, repos, and backups may fill the disk"
+  fi
 fi
 
 command -v tailscale >/dev/null 2>&1 || fail "tailscale is not installed"

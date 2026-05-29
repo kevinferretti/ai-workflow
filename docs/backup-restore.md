@@ -3,12 +3,12 @@
 Backups cover the runtime state that is intentionally not committed to git:
 
 - `.env`
-- `.state/codex`
-- `.state/gh`
-- `.state/glab`
-- `.state/ssh`
-- `.state/commandhistory`
-- `workspace/repos`
+- `~/workspace/repos`
+- `~/workspace/state/codex`
+- `~/workspace/state/gh`
+- `~/workspace/state/glab`
+- `~/workspace/state/ssh`
+- `~/workspace/state/commandhistory`
 
 Treat every backup archive as sensitive. It can contain Codex auth, GitHub auth,
 GitLab CLI auth, SSH keys, shell history, private repository contents, and
@@ -23,7 +23,8 @@ bash scripts/backup-workspace.sh
 bash scripts/check-workspace.sh
 ```
 
-The archive is written to `backups/workspace-<timestamp>.tar.gz` by default.
+The archive is written to `~/workspace/backups/workspace-<timestamp>.tar.gz` by
+default.
 
 For an explicit live backup while Codex may be writing state:
 
@@ -39,22 +40,22 @@ history file could change while the archive is being created.
 Close active Codex sessions first:
 
 ```bash
-bash scripts/restore-workspace.sh backups/workspace-<timestamp>.tar.gz
+bash scripts/restore-workspace.sh ~/workspace/backups/workspace-<timestamp>.tar.gz
 bash scripts/start-workspace.sh
 bash scripts/check-workspace.sh
 ```
 
 If runtime state already exists, restore refuses to continue. To preserve the
-existing state under `backups/pre-restore-*` and then restore:
+existing state under `~/workspace/backups/pre-restore-*` and then restore:
 
 ```bash
-bash scripts/restore-workspace.sh --force backups/workspace-<timestamp>.tar.gz
+bash scripts/restore-workspace.sh --force ~/workspace/backups/workspace-<timestamp>.tar.gz
 ```
 
 Preview an archive without changing files:
 
 ```bash
-bash scripts/restore-workspace.sh --dry-run backups/workspace-<timestamp>.tar.gz
+bash scripts/restore-workspace.sh --dry-run ~/workspace/backups/workspace-<timestamp>.tar.gz
 ```
 
 ## Restore On A Fresh OVH VPS
