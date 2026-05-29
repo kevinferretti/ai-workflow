@@ -5,7 +5,7 @@ usage() {
   cat <<'USAGE'
 Usage: bash scripts/backup-workspace.sh [--live] [--output-dir DIR] [--prefix NAME]
 
-Creates a timestamped tar.gz archive containing the persistent workspace
+Creates a timestamped tar.gz archive containing the persistent host workspace
 runtime state:
 
   .env
@@ -16,8 +16,8 @@ runtime state:
   .state/commandhistory
   workspace/repos
 
-By default the script refuses to back up while the workspace container is
-running. Use --live only when you accept a potentially inconsistent snapshot.
+By default the script refuses to back up while Codex is running for the current
+user. Use --live only when you accept a potentially inconsistent snapshot.
 USAGE
 }
 
@@ -63,19 +63,18 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
-[ -f .env ] || fail ".env is required; run 'cp .env.example .env' and start the workspace first"
+[ -f .env ] || fail ".env is required; run 'cp .env.example .env' and 'bash scripts/start-workspace.sh' first"
 
 set -a
 # shellcheck disable=SC1091
 . ./.env
 set +a
 
-container_id="$(docker compose ps -q workspace 2>/dev/null || true)"
-running=false
-if [ -n "${container_id}" ]; then
-  running="$(docker inspect -f '{{.State.Running}}' "${container_id}" 2>/dev/null || echo false)"
-  if [ "${running}" = "true" ] && [ "${allow_live}" -ne 1 ]; then
-    fail "workspace is running; stop it with 'docker compose stop workspace' before backup, or rerun with --live"
+codex_running=false
+if command -v pgrep >/dev/null 2>&1 && pgrep -u "$(id -u)" -x codex >/dev/null 2>&1; then
+  codex_running=true
+  if [ "${allow_live}" -ne 1 ]; then
+    fail "codex is running for user $(id -un); close it before backup, or rerun with --live"
   fi
 fi
 
@@ -166,9 +165,10 @@ mkdir -p "${metadata_dir}"
 {
   echo "created_utc=${timestamp}"
   echo "archive_format=tar.gz"
+  echo "workspace_model=direct-host"
   echo "repo_root=${repo_root}"
-  echo "compose_project_name=${COMPOSE_PROJECT_NAME:-ai-workflow}"
-  echo "workspace_container_running=${running}"
+  echo "workspace_user=${WORKSPACE_USER:-codex}"
+  echo "codex_processes_running=${codex_running}"
   echo "platform_git_branch=$(git branch --show-current 2>/dev/null || true)"
   echo "platform_git_commit=$(git rev-parse HEAD 2>/dev/null || true)"
   if git diff --quiet --ignore-submodules -- 2>/dev/null && git diff --cached --quiet --ignore-submodules -- 2>/dev/null; then
@@ -184,7 +184,15 @@ mkdir -p "${metadata_dir}"
   echo "- .state/codex/tmp"
 } >"${metadata_dir}/manifest.txt"
 
-docker compose config >"${metadata_dir}/docker-compose.config.yml" 2>"${metadata_dir}/docker-compose.config.stderr" || true
+{
+  command -v codex >/dev/null 2>&1 && codex --version || true
+  command -v node >/dev/null 2>&1 && node --version || true
+  command -v npm >/dev/null 2>&1 && npm --version || true
+  command -v git >/dev/null 2>&1 && git --version || true
+  command -v gh >/dev/null 2>&1 && gh --version || true
+  command -v glab >/dev/null 2>&1 && glab --version || true
+} >"${metadata_dir}/tool-versions.txt" 2>/dev/null || true
+
 git status --short >"${metadata_dir}/git-status.txt" 2>/dev/null || true
 
 archive="${backup_dir_abs}/${backup_prefix}-${timestamp}.tar.gz"
@@ -200,4 +208,4 @@ mv "${archive_tmp}" "${archive}"
 chmod 0600 "${archive}" 2>/dev/null || true
 
 echo "Created backup: ${archive}"
-echo "Treat this archive as sensitive; it may contain Codex, GitHub, and SSH credentials."
+echo "Treat this archive as sensitive; it may contain Codex, GitHub, GitLab, and SSH credentials."

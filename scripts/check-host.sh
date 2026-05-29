@@ -10,6 +10,16 @@ fail() {
   exit 1
 }
 
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
+cd "${repo_root}"
+
+if [ -f .env ]; then
+  set -a
+  # shellcheck disable=SC1091
+  . ./.env
+  set +a
+fi
+
 if [ "$(uname -s)" != "Linux" ]; then
   fail "host check must run on the Linux VM host"
 fi
@@ -44,17 +54,21 @@ fi
 available_mib="$(df -Pm . | awk 'NR == 2 { print $4 }')"
 echo "Disk available at repo root: ${available_mib} MiB"
 if [ "$available_mib" -lt 20000 ]; then
-  warn "less than 20 GiB free at repo root; Docker images and repos may fill the disk"
+  warn "less than 20 GiB free at repo root; package caches and repos may fill the disk"
 fi
 
-command -v docker >/dev/null 2>&1 || fail "docker is not installed"
 command -v tailscale >/dev/null 2>&1 || fail "tailscale is not installed"
 
-docker info >/dev/null 2>&1 || fail "docker daemon is not reachable for user '${USER}'"
-docker compose version >/dev/null 2>&1 || fail "docker compose plugin is not available"
+for command_name in codex node npm git python3 rg gh glab zsh; do
+  command -v "${command_name}" >/dev/null 2>&1 || fail "${command_name} is not installed"
+done
 
-echo "Docker: $(docker --version)"
-echo "Compose: $(docker compose version --short 2>/dev/null || docker compose version)"
+echo "Codex: $(codex --version)"
+echo "Node: $(node --version)"
+echo "npm: $(npm --version)"
+echo "Git: $(git --version)"
+echo "GitHub CLI: $(gh --version | head -n 1)"
+echo "GitLab CLI: $(glab --version | head -n 1)"
 
 if tailscale status >/dev/null 2>&1; then
   echo "Tailscale IPv4: $(tailscale ip -4 2>/dev/null || true)"
@@ -62,17 +76,16 @@ else
   fail "tailscale is installed but not connected; run 'sudo tailscale up --ssh'"
 fi
 
-if [ -f docker-compose.yml ]; then
-  compose_config="$(docker compose config)" || fail "docker compose config failed"
-  if grep -qE '^[[:space:]]+ports:' <<<"$compose_config"; then
-    fail "docker compose config contains published ports"
-  fi
-  echo "Compose ports: none published"
+workspace_user="${WORKSPACE_USER:-codex}"
+if id -u "${workspace_user}" >/dev/null 2>&1; then
+  echo "Workspace user: ${workspace_user}"
+else
+  fail "workspace user '${workspace_user}' does not exist"
 fi
 
 if command -v ss >/dev/null 2>&1; then
   echo "Listening TCP sockets:"
-  ss -ltnp 2>/dev/null | awk 'NR == 1 || /:22[[:space:]]/ || /tailscaled/ || /docker/'
+  ss -ltnp 2>/dev/null | awk 'NR == 1 || /:22[[:space:]]/ || /tailscaled/'
 fi
 
 echo "Host check passed."

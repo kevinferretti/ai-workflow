@@ -6,9 +6,9 @@ usage() {
 Usage: bash scripts/restore-workspace.sh [--force] [--dry-run] BACKUP_ARCHIVE
 
 Restores a backup created by scripts/backup-workspace.sh into the platform repo.
-The workspace container must be stopped. Existing runtime state is refused by
-default. With --force, existing state is moved to backups/pre-restore-* before
-the archive is extracted.
+Codex should not be running while restore is applied. Existing runtime state is
+refused by default. With --force, existing state is moved to backups/pre-restore-*
+before the archive is extracted.
 USAGE
 }
 
@@ -54,10 +54,8 @@ done
 
 archive_abs="$(realpath -m "${archive}")"
 
-container_id="$(docker compose ps -q workspace 2>/dev/null || true)"
-if [ -n "${container_id}" ]; then
-  running="$(docker inspect -f '{{.State.Running}}' "${container_id}" 2>/dev/null || echo false)"
-  [ "${running}" != "true" ] || fail "workspace is running; stop it with 'docker compose stop workspace' before restore"
+if command -v pgrep >/dev/null 2>&1 && pgrep -u "$(id -u)" -x codex >/dev/null 2>&1; then
+  fail "codex is running for user $(id -un); close it before restore"
 fi
 
 tmp_dir="$(mktemp -d)"

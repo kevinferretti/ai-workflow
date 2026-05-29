@@ -18,7 +18,7 @@ The owner currently develops locally on Windows using Codex and VS Code. The hos
 - Support normal interactive AI development with single prompts and responses, similar to the owner's current local Codex usage.
 - Allow the owner to use VS Code against the hosted workspace.
 - Run Codex CLI inside the hosted workspace so agent actions operate directly on cloud-hosted repo files.
-- Keep the platform self-hosted in Docker on a cloud VM.
+- Keep the platform self-hosted on a cloud VM with repo-defined provisioning scripts.
 - Make the workflow opinionated but easy to evolve over time.
 - Track platform and workflow evolution in this repo.
 - Prefer real production wiring over deterministic demo behavior that masks failures.
@@ -42,17 +42,17 @@ The owner should be able to:
 
 - The platform runs on a Linux cloud VM.
 - The first provider target is OVH VPS-2 running Ubuntu 24.04 LTS.
-- The runtime is Docker-based.
+- The runtime is a dedicated non-root workspace user on the VM host.
 - The workspace is a single persistent environment, not per-task or ephemeral.
-- Workspace data persists across container restarts and VM reboots.
+- Workspace data persists across VM reboots.
 - Infrastructure should be understandable and maintainable by one person.
 
 ### Access Model
 
-- Laptop access uses VS Code Remote SSH into the cloud workspace or host.
+- Laptop access uses VS Code Remote SSH or Codex App SSH into the cloud workspace user.
 - Codex CLI runs inside the hosted workspace.
-- The local Codex desktop app is not required for the first version.
-- The Codex app-server / remote-control path may be investigated as an experiment, but the MVP must not depend on it.
+- The local Codex desktop app can connect over SSH when that path is available.
+- The Codex app-server / remote-control path may be investigated as an experiment, but the MVP must not depend on a separate app server.
 - Phone access is not required to provide full development capability in the MVP.
 
 ### Security Model
@@ -61,7 +61,7 @@ The owner should be able to:
 - Tailscale is the initial private access layer.
 - No raw development, admin, SSH, or workspace service should be exposed publicly by default.
 - Cloudflare Access is deferred for future browser/PWA surfaces.
-- The workspace container should run as a non-root user where practical.
+- The workspace should run as a dedicated non-root user.
 - Secrets must be injected at runtime and must not be committed to the repo.
 - Git should remain the primary record of meaningful source changes.
 - Destructive actions and deployment actions should require explicit owner approval.
@@ -94,7 +94,7 @@ PRD.md -> INTERPRETATION.md -> SPEC.md -> PLAN.md -> TASKS.md
 - No email notifications.
 - No full phone-native development interface.
 - No requirement to use a Windows VM solely because the owner's laptop runs Windows.
-- No requirement for the local Codex desktop app to directly control the remote workspace in the first version.
+- No requirement for a separate Codex app-server or remote-control service in the first version.
 - No fake demo agent behavior that hides missing production integrations.
 
 ## Future Expansion
@@ -121,23 +121,21 @@ Potential future capabilities include:
 The MVP is successful when:
 
 - A fresh cloud VM can be prepared from the repo's documented setup.
-- The Docker workspace starts reliably on the VM.
+- The host workspace can be prepared reliably on the VM with repo-defined scripts.
 - Runtime state can be backed up and restored using repo-defined scripts.
 - The owner can connect over Tailscale.
 - The owner can open the workspace from VS Code on a Windows laptop.
 - The owner can run Codex CLI inside the hosted workspace.
 - Codex can read and modify files in the hosted repo.
-- Changes persist across container restart.
+- Changes persist across VM reboot.
 - Workflow skills are available to Codex inside the hosted environment.
-- No unintended public ports are exposed.
+- No unintended public services are exposed.
 - The repo contains enough documentation to rebuild the environment from scratch.
 
 ## Open Questions
 
-- Should Docker Compose be sufficient for the MVP, or should the repo include a provisioning tool such as Terraform or OpenTofu from the start?
-- Should SSH terminate on the VM host, inside the workspace container, or both?
-- Should VS Code connect to the host and attach to the container, or connect directly into the workspace container?
-- Which base development tools should be included in the first workspace image?
+- Should the repo include a provisioning tool such as Terraform or OpenTofu, or are host scripts sufficient for the MVP?
+- Which base development tools should be installed by the first host bootstrap?
 - Which secret store should be used for the first version?
 - What backup target and retention policy should be used for the persistent workspace volume?
 - What minimum audit trail is required for the first version?

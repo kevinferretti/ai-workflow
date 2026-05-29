@@ -16,18 +16,16 @@ prompts.
 
 ## Create A Consistent Backup
 
-From the platform repo on the VM:
+From the platform repo on the VM, close active Codex sessions first, then run:
 
 ```bash
-docker compose stop workspace
 bash scripts/backup-workspace.sh
-docker compose up -d workspace
 bash scripts/check-workspace.sh
 ```
 
 The archive is written to `backups/workspace-<timestamp>.tar.gz` by default.
 
-For an explicit live backup while the workspace is running:
+For an explicit live backup while Codex may be writing state:
 
 ```bash
 bash scripts/backup-workspace.sh --live
@@ -38,10 +36,9 @@ history file could change while the archive is being created.
 
 ## Restore On The Same VM
 
-Stop the workspace first:
+Close active Codex sessions first:
 
 ```bash
-docker compose stop workspace
 bash scripts/restore-workspace.sh backups/workspace-<timestamp>.tar.gz
 bash scripts/start-workspace.sh
 bash scripts/check-workspace.sh
@@ -64,7 +61,7 @@ bash scripts/restore-workspace.sh --dry-run backups/workspace-<timestamp>.tar.gz
 
 1. Provision the OVH VPS and clone this repo using `docs/providers/ovh.md`.
 2. Copy the backup archive onto the VPS.
-3. From the platform repo, run:
+3. From the platform repo as the workspace user, run:
 
 ```bash
 bash scripts/restore-workspace.sh /path/to/workspace-<timestamp>.tar.gz

@@ -2,33 +2,45 @@
 
 ## MVP Security Boundary
 
-The first security boundary is private network access to a single-user cloud VM. Tailscale protects operator access. Docker isolates the development workspace from the VM host, but it is not a perfect security boundary.
+The first security boundary is private network access to a single-user cloud VM.
+Tailscale protects routine operator access. The dedicated `codex` user is the
+workspace boundary for the MVP; it is not a sandbox boundary against malicious
+code.
 
-The Compose workspace publishes no ports by default. SSH access should be to the VM over Tailscale, not to the container over the public internet.
+Direct host execution is intentionally simpler than a persistent devcontainer,
+but it has a larger blast radius. Do not run untrusted repositories with broad
+credentials available to the workspace user. Anything available to that user,
+including Codex auth, SSH keys, GitHub auth, and GitLab auth, is in scope for
+commands run there.
 
-## Codex And Containers
+## Host Account
 
-The workspace follows OpenAI's documented dev-container pattern: Codex runs inside a container with persistent Codex configuration and `bubblewrap` available for the inner Linux sandbox. The container grants additional capabilities so Codex sandboxing can work inside Docker.
+`scripts/bootstrap-ubuntu-host.sh` creates the workspace user and grants
+passwordless sudo by default. That matches the single-user development-box
+model, but it means a compromised workspace user can administer the VM.
 
-Do not run untrusted repositories with broad credentials mounted into this workspace. Anything available in the workspace, including Codex auth, SSH keys, GitHub auth, and GitLab auth, is in scope for commands run there.
+Keep public SSH as bootstrap-only access. After Tailscale SSH works, restrict
+the cloud firewall so routine SSH uses the tailnet.
 
 ## Secrets
 
 - Do not commit `.env`.
 - Do not commit `.state/`.
-- Do not commit SSH keys, Codex auth, GitHub auth, cloud credentials, or API keys.
+- Do not commit SSH keys, Codex auth, GitHub auth, GitLab auth, cloud credentials, or API keys.
 - Prefer short-lived credentials where possible.
 - Treat `.state/codex`, `.state/gh`, `.state/glab`, and `.state/ssh` as sensitive backup material.
 - Treat `backups/*.tar.gz` as sensitive because they can contain the same auth material and private repository contents.
 
 ## Public Exposure
 
-Do not add `ports:` to `docker-compose.yml` for the MVP. If a browser surface is added later, put it behind Cloudflare Access or an equivalent identity-aware proxy and keep raw admin surfaces private.
+Do not publish raw development, admin, SSH, or workspace services publicly by
+default. If a browser surface is added later, put it behind Cloudflare Access or
+an equivalent identity-aware proxy and keep raw admin surfaces private.
 
 ## Backups
 
 Use `scripts/backup-workspace.sh` for portable backups of runtime state. For a
-consistent archive, stop the workspace first. Use live backups only when an
+consistent archive, close active Codex sessions first. Use `--live` only when an
 inconsistent snapshot is acceptable.
 
 Provider backups are useful for whole-VM rollback, but the repo-defined backup
@@ -40,6 +52,7 @@ is the restore path when moving to a fresh VM.
 - Cloud firewall policy documented as code.
 - Cloudflare Access for selected browser apps.
 - Egress controls for agent runs.
+- Optional isolated Docker task runners for risky repositories.
 - Per-repo or per-task workspaces.
 - Audit logs for prompts, commands, file changes, and deployments.
 - Explicit deploy approvals.

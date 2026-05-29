@@ -6,31 +6,36 @@ The current MVP target is:
 
 - OVH VPS-2 as the first cloud target
 - Linux cloud VM
-- Docker Compose
-- single persistent workspace container
+- dedicated `codex` workspace user on the VM host
 - Tailscale-private access
 - VS Code Remote SSH from a laptop
 - Codex CLI running inside the hosted workspace
 - GitHub CLI and GitLab CLI available inside the hosted workspace
 - this repo's workflow skills installed into the hosted Codex environment
 
-No workspace ports are published by default.
+No raw development or admin services should be exposed publicly by default.
 
 ## Quick Start On A Cloud VM
 
 On a fresh Ubuntu VM:
 
 ```bash
+sudo apt-get update
+sudo apt-get install -y git
+git clone <PLATFORM_REPO_URL> ~/requirements-workflow-skills
+cd ~/requirements-workflow-skills
 bash scripts/bootstrap-ubuntu-host.sh
 ```
 
-After logging out and back in:
+Then join the tailnet, connect as the workspace user, and prepare the repo-local runtime state:
 
 ```bash
 sudo tailscale up --ssh
-bash scripts/check-host.sh
+ssh codex@<TAILSCALE_IP>
+cd ~/requirements-workflow-skills
 cp .env.example .env
 bash scripts/start-workspace.sh
+bash scripts/check-host.sh
 bash scripts/check-workspace.sh
 ```
 
@@ -52,10 +57,7 @@ See:
 
 ## Runtime Layout
 
-- `docker-compose.yml`: persistent workspace runtime.
-- `infra/workspace/`: Docker image, entrypoint, shell setup, and Codex defaults.
-- `.devcontainer/devcontainer.json`: VS Code Dev Containers metadata.
-- `scripts/`: bootstrap, start, shell, and verification scripts.
+- `scripts/`: host bootstrap, workspace setup, shell, backup, restore, and verification scripts.
 - `skills/`: reusable requirements workflow skills.
 - `reqs/PRD.md`: product direction for the platform MVP.
 
