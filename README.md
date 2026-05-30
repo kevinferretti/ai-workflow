@@ -72,15 +72,20 @@ Default host layout:
 
 ## Browser Screenshots
 
-The host bootstrap installs Playwright's Chromium browser and required Ubuntu
-runtime libraries for the workspace user. Codex can use it to verify browser UI
-work from any repo in `~/workspace/repos`.
+The host bootstrap installs the global Playwright CLI, Playwright's Chromium
+browser, and required Ubuntu runtime libraries for the workspace user. Codex can
+use it to verify browser UI work from any repo in `~/workspace/repos`.
 
 Example:
 
 ```bash
-npx playwright screenshot http://localhost:5173 artifacts/home.png
+playwright screenshot http://localhost:5173 artifacts/home.png
 ```
+
+Repos do not need to carry Playwright as a dependency for screenshot checks that
+use the CLI. Add `@playwright/test` or `playwright` to an individual repo only
+when that repo needs committed Playwright tests or Node scripts that
+`require("playwright")`.
 
 `scripts/check-workspace.sh` includes a Playwright smoke test that captures a
 small screenshot and fails if Chromium cannot launch.

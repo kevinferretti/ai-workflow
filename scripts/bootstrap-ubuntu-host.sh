@@ -105,7 +105,11 @@ if [ "${installed_node_major}" != "${node_major}" ]; then
   sudo apt-get install -y --no-install-recommends nodejs
 fi
 
-npx --yes "playwright@${playwright_npm_version}" install-deps chromium
+if ! command -v playwright >/dev/null 2>&1 || ! playwright --version 2>/dev/null | grep -F "Version ${playwright_npm_version}" >/dev/null; then
+  sudo npm install -g "playwright@${playwright_npm_version}"
+fi
+
+playwright install-deps chromium
 
 if ! command -v tailscale >/dev/null 2>&1; then
   curl -fsSL "https://pkgs.tailscale.com/stable/ubuntu/${VERSION_CODENAME}.noarmor.gpg" \
@@ -154,7 +158,7 @@ workspace_home="$(getent passwd "${workspace_user}" | cut -d: -f6)"
 sudo -u "${workspace_user}" env \
   HOME="${workspace_home}" \
   npm_config_cache="${workspace_home}/.npm" \
-  npx --yes "playwright@${playwright_npm_version}" install chromium
+  playwright install chromium
 
 workspace_repo="${workspace_home}/ai-workflow"
 if [ ! -e "${workspace_repo}" ]; then
