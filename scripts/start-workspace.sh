@@ -155,7 +155,6 @@ migrate_dir_to_link "${gh_state}" "${HOME}/.config/gh" 0700
 migrate_dir_to_link "${glab_state}" "${HOME}/.config/glab-cli" 0700
 migrate_dir_to_link "${ssh_state}" "${HOME}/.ssh" 0700
 migrate_file_to_link "${history_state}/.bash_history" "${HOME}/.bash_history"
-migrate_file_to_link "${history_state}/.zsh_history" "${HOME}/.zsh_history"
 
 write_codex_config() {
   local config_file="$1"
@@ -214,9 +213,9 @@ export WORKSPACE_REPOS="${workspace_repos}"
 export CODEX_HOME="${codex_state}"
 export GH_CONFIG_DIR="${gh_state}"
 export GLAB_CONFIG_DIR="${glab_state}"
-export HISTFILE="${history_state}/.zsh_history"
+export HISTFILE="${history_state}/.bash_history"
 export HISTSIZE=50000
-export SAVEHIST=50000
+export HISTFILESIZE=50000
 EOF
 chmod 0600 "${env_file}" 2>/dev/null || true
 
@@ -234,7 +233,6 @@ ensure_profile_source() {
 
 ensure_profile_source "${HOME}/.profile"
 ensure_profile_source "${HOME}/.bashrc"
-ensure_profile_source "${HOME}/.zshrc"
 
 CODEX_HOME="${codex_state}" PLATFORM_ROOT="${repo_root}" bash scripts/install-platform-skills.sh
 

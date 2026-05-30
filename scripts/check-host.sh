@@ -98,7 +98,7 @@ fi
 
 command -v tailscale >/dev/null 2>&1 || fail "tailscale is not installed"
 
-for command_name in codex node npm git python3 rg gh glab zsh; do
+for command_name in bash codex node npm git python3 rg gh glab; do
   command -v "${command_name}" >/dev/null 2>&1 || fail "${command_name} is not installed"
 done
 
@@ -121,6 +121,9 @@ if id -u "${workspace_user}" >/dev/null 2>&1; then
 else
   fail "workspace user '${workspace_user}' does not exist"
 fi
+
+workspace_shell="$(getent passwd "${workspace_user}" | cut -d: -f7)"
+[ "${workspace_shell}" = "/bin/bash" ] || fail "workspace user '${workspace_user}' shell is ${workspace_shell}, expected /bin/bash"
 
 if command -v ss >/dev/null 2>&1; then
   echo "Listening TCP sockets:"

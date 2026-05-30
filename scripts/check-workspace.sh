@@ -63,7 +63,7 @@ echo "Platform repo: ${repo_root}"
 echo "Workspace root: ${workspace_root}"
 echo "Additional repos: ${workspace_repos}"
 
-for command_name in codex node npm git python3 rg gh glab zsh; do
+for command_name in bash codex node npm git python3 rg gh glab; do
   command -v "${command_name}" >/dev/null 2>&1 || fail "${command_name} is not installed"
 done
 

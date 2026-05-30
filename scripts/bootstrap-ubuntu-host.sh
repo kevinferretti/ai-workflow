@@ -79,8 +79,7 @@ sudo apt-get install -y --no-install-recommends \
   rsync \
   sudo \
   unzip \
-  vim \
-  zsh
+  vim
 
 sudo locale-gen en_US.UTF-8
 sudo ln -sf /usr/bin/fdfind /usr/local/bin/fd
@@ -132,10 +131,10 @@ if ! command -v codex >/dev/null 2>&1 || ! codex --version 2>/dev/null | grep -F
 fi
 
 if ! id -u "${workspace_user}" >/dev/null 2>&1; then
-  sudo useradd --create-home --shell /usr/bin/zsh "${workspace_user}"
+  sudo useradd --create-home --shell /bin/bash "${workspace_user}"
 fi
 
-sudo usermod --shell /usr/bin/zsh "${workspace_user}"
+sudo usermod --shell /bin/bash "${workspace_user}"
 sudo usermod -aG sudo "${workspace_user}"
 printf '%s ALL=(ALL) NOPASSWD:ALL\n' "${workspace_user}" \
   | sudo tee "/etc/sudoers.d/${workspace_user}" >/dev/null
