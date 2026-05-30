@@ -59,6 +59,33 @@ git clone <repo-url>
 Those repos persist under the managed workspace root and are included in
 repo-defined backups.
 
+## GitHub And GitLab Auth
+
+`scripts/start-workspace.sh` runs `scripts/setup-git-auth.sh --non-interactive`
+by default. If `.env` points to token files, the setup authenticates `gh` and
+`glab`, creates a workspace SSH key if needed, uploads that key to both
+accounts, and configures Git helpers.
+
+For a fresh login:
+
+```bash
+install -m 0600 /dev/null ~/github-token
+install -m 0600 /dev/null ~/gitlab-token
+nano ~/github-token
+nano ~/gitlab-token
+nano .env
+bash scripts/setup-git-auth.sh --require-auth
+```
+
+Set `GITHUB_TOKEN_FILE=~/github-token` and
+`GITLAB_TOKEN_FILE=~/gitlab-token` in `.env`. Tokens can be removed after
+`gh auth status` and `glab auth status` pass, because the CLI auth state is
+persisted under `~/workspace/state`.
+
+For a classic GitHub token, use `repo`, `read:org`, `gist`, and
+`admin:public_key` when `WORKSPACE_GIT_UPLOAD_SSH_KEY=1`. For GitLab, use an
+`api` token so `glab` can add the SSH key.
+
 ## GitLab Workflow
 
 The host bootstrap installs `glab` for GitLab merge requests, pipelines, issues,
@@ -72,7 +99,7 @@ git clone git@labs.gauntletai.com:<namespace>/<project>.git
 For GitLab API operations, authenticate as the workspace user:
 
 ```bash
-glab auth login --hostname labs.gauntletai.com
+bash scripts/setup-git-auth.sh --require-auth
 ```
 
 `glab` state persists in `~/workspace/state/glab` by default.

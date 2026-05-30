@@ -10,7 +10,8 @@ The current MVP target is:
 - Tailscale-private access
 - VS Code Remote SSH from a laptop
 - Codex CLI running inside the hosted workspace
-- GitHub CLI and GitLab CLI available inside the hosted workspace
+- GitHub CLI and GitLab CLI authenticated inside the hosted workspace when token inputs are provided
+- a workspace SSH key that can be uploaded to GitHub and GitLab for clone/push access
 - this repo's workflow skills installed into the hosted Codex environment
 
 No raw development or admin services should be exposed publicly by default.

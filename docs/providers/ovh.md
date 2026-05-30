@@ -72,8 +72,9 @@ bash scripts/check-workspace.sh
 ```
 
 Before logging in to Codex, GitHub, or GitLab, run a backup/restore test from
-`docs/backup-restore.md`. After credentials are added, every backup archive must
-be treated as sensitive.
+`docs/backup-restore.md`. For GitHub/GitLab, put one-time token file paths in
+`.env` and rerun `bash scripts/setup-git-auth.sh --require-auth`. After
+credentials are added, every backup archive must be treated as sensitive.
 
 Open the workspace shell:
 

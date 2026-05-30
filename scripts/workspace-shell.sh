@@ -50,7 +50,8 @@ export GH_CONFIG_DIR="$(to_abs "${WORKSPACE_GH_STATE_DIR:-${workspace_root}/stat
 export GLAB_CONFIG_DIR="$(to_abs "${WORKSPACE_GLAB_STATE_DIR:-${workspace_root}/state/glab}")"
 export HISTFILE="$(to_abs "${WORKSPACE_COMMAND_HISTORY_DIR:-${workspace_root}/state/commandhistory}")/.bash_history"
 
-mkdir -p "${WORKSPACE_ROOT}" "${WORKSPACE_REPOS}" "${CODEX_HOME}" "$(dirname "${HISTFILE}")"
+mkdir -p "${WORKSPACE_ROOT}" "${WORKSPACE_REPOS}" "${CODEX_HOME}" "${GH_CONFIG_DIR}" "${GLAB_CONFIG_DIR}" "$(dirname "${HISTFILE}")"
+chmod 0700 "${GH_CONFIG_DIR}" "${GLAB_CONFIG_DIR}" 2>/dev/null || true
 
 shell_path="$(command -v bash)"
 

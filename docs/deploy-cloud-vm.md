@@ -69,6 +69,28 @@ codex login
 The resulting Codex state is stored under `~/workspace/state/codex` by default
 and should be backed up as sensitive runtime state.
 
+## GitHub And GitLab Login
+
+For fully automatic setup, create token files readable only by the workspace
+user, point `.env` at them, then rerun the auth setup:
+
+```bash
+install -m 0600 /dev/null ~/github-token
+install -m 0600 /dev/null ~/gitlab-token
+nano ~/github-token
+nano ~/gitlab-token
+nano .env
+bash scripts/setup-git-auth.sh --require-auth
+```
+
+Use `GITHUB_TOKEN_FILE=~/github-token` and
+`GITLAB_TOKEN_FILE=~/gitlab-token` in `.env`. By default the script creates a
+workspace SSH key, uploads it to both accounts after CLI auth, configures Git
+helpers, and keeps GitHub/GitLab CLI state under `~/workspace/state`.
+For a classic GitHub token, use `repo`, `read:org`, `gist`, and
+`admin:public_key` when `WORKSPACE_GIT_UPLOAD_SSH_KEY=1`. For GitLab, use an
+`api` token so `glab` can add the SSH key.
+
 ## Update Or Reprovision
 
 After changing pinned tool versions, host bootstrap logic, or workspace setup:

@@ -38,7 +38,8 @@ by default:
 - `~/workspace/state/codex`: Codex config, auth, history, logs, and installed skills.
 - `~/workspace/state/gh`: GitHub CLI state.
 - `~/workspace/state/glab`: GitLab CLI state.
-- `~/workspace/state/ssh`: SSH keys/config for the workspace user.
+- `~/workspace/state/ssh`: SSH keys/config for the workspace user, including
+  the optional GitHub/GitLab workspace key.
 - `~/workspace/state/commandhistory`: shell history.
 - `~/workspace/backups`: local backup archives and restore metadata.
 
@@ -64,3 +65,12 @@ from `.env`. The workspace setup script installs this repo's
 
 The generated Codex config uses `workspace-write` sandboxing, stores history,
 and trusts the platform repo plus `~/workspace/repos`.
+
+## Git Hosting Auth
+
+GitHub and GitLab auth are handled by the official CLIs plus SSH. Token files
+or token environment variables are used once by `scripts/setup-git-auth.sh`; the
+resulting CLI state lives under `~/workspace/state/gh` and
+`~/workspace/state/glab`. The same script can create one workspace SSH key under
+`~/workspace/state/ssh`, upload the public key to both accounts, and configure
+Git to use the CLI credential helpers for HTTPS operations.

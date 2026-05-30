@@ -236,6 +236,12 @@ ensure_profile_source "${HOME}/.bashrc"
 
 CODEX_HOME="${codex_state}" PLATFORM_ROOT="${repo_root}" bash scripts/install-platform-skills.sh
 
+if [ "${WORKSPACE_AUTO_GIT_AUTH:-1}" = "1" ]; then
+  if ! bash scripts/setup-git-auth.sh --non-interactive; then
+    warn "Git hosting auth setup did not complete; rerun 'bash scripts/setup-git-auth.sh' after checking .env"
+  fi
+fi
+
 echo "Host workspace is ready."
 echo "Platform repo: ${repo_root}"
 echo "Workspace root: ${workspace_root}"

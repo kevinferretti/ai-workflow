@@ -28,6 +28,8 @@ the cloud firewall so routine SSH uses the tailnet.
 - Do not commit workspace runtime state.
 - Do not commit SSH keys, Codex auth, GitHub auth, GitLab auth, cloud credentials, or API keys.
 - Prefer short-lived credentials where possible.
+- Prefer one-time token files for `scripts/setup-git-auth.sh`; remove them
+  after `gh auth status` and `glab auth status` pass.
 - Treat `~/workspace/state/codex`, `~/workspace/state/gh`, `~/workspace/state/glab`, and `~/workspace/state/ssh` as sensitive backup material.
 - Treat `~/workspace/backups/*.tar.gz` as sensitive because they can contain the same auth material and private repository contents.
 

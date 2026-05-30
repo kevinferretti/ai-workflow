@@ -94,4 +94,17 @@ grep -F "${workspace_repos}" "${codex_state}/config.toml" >/dev/null || fail "Co
 [ -d "${codex_state}/skills/requirements-workflow-init" ] || fail "requirements workflow init skill is not installed"
 [ -d "${codex_state}/skills/requirements-workflow-shared" ] || fail "requirements workflow shared skill is not installed"
 
+if [ "${WORKSPACE_REQUIRE_GIT_AUTH:-0}" = "1" ]; then
+  github_host="${GITHUB_HOST:-github.com}"
+  gitlab_host="${GITLAB_HOST:-labs.gauntletai.com}"
+  github_host="${github_host#https://}"
+  github_host="${github_host#http://}"
+  github_host="${github_host%%/*}"
+  gitlab_host="${gitlab_host#https://}"
+  gitlab_host="${gitlab_host#http://}"
+  gitlab_host="${gitlab_host%%/*}"
+  gh auth status --hostname "${github_host}" >/dev/null 2>&1 || fail "GitHub CLI is not authenticated for ${github_host}; run scripts/setup-git-auth.sh"
+  glab auth status --hostname "${gitlab_host}" >/dev/null 2>&1 || fail "GitLab CLI is not authenticated for ${gitlab_host}; run scripts/setup-git-auth.sh"
+fi
+
 echo "Workspace check passed."
