@@ -98,7 +98,7 @@ fi
 
 command -v tailscale >/dev/null 2>&1 || fail "tailscale is not installed"
 
-for command_name in bash codex node npm git python3 rg gh glab; do
+for command_name in bash codex node npm git python3 rg gh glab setfacl getfacl; do
   command -v "${command_name}" >/dev/null 2>&1 || fail "${command_name} is not installed"
 done
 
@@ -108,6 +108,7 @@ echo "npm: $(npm --version)"
 echo "Git: $(git --version)"
 echo "GitHub CLI: $(gh --version | head -n 1)"
 echo "GitLab CLI: $(glab --version | head -n 1)"
+echo "ACL: $(setfacl --version | head -n 1)"
 
 if tailscale status >/dev/null 2>&1; then
   echo "Tailscale IPv4: $(tailscale ip -4 2>/dev/null || true)"
