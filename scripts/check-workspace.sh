@@ -17,6 +17,7 @@ set -a
 set +a
 
 workspace_user="${WORKSPACE_USER:-codex}"
+playwright_npm_version="${PLAYWRIGHT_NPM_VERSION:-1.60.0}"
 [ "$(id -u)" -ne 0 ] || fail "workspace check must not run as root"
 [ "$(id -un)" = "${workspace_user}" ] || fail "workspace check must run as ${workspace_user}; current user is $(id -un)"
 
@@ -72,6 +73,7 @@ node --version
 npm --version
 git --version
 python3 --version
+npx --yes "playwright@${playwright_npm_version}" --version
 
 [ -d "${workspace_repos}" ] || fail "workspace repos directory does not exist: ${workspace_repos}"
 [ -w "${workspace_repos}" ] || fail "workspace repos directory is not writable: ${workspace_repos}"
@@ -93,6 +95,13 @@ grep -F "${workspace_repos}" "${codex_state}/config.toml" >/dev/null || fail "Co
 
 [ -d "${codex_state}/skills/requirements-workflow-init" ] || fail "requirements workflow init skill is not installed"
 [ -d "${codex_state}/skills/requirements-workflow-shared" ] || fail "requirements workflow shared skill is not installed"
+
+screenshot_check="$(mktemp --suffix=.png)"
+trap 'rm -f "${screenshot_check}"' EXIT
+npx --yes "playwright@${playwright_npm_version}" screenshot \
+  'data:text/html,<html><body style="font-family:system-ui,sans-serif;margin:40px"><h1>AI workflow screenshot check</h1></body></html>' \
+  "${screenshot_check}" >/dev/null
+[ -s "${screenshot_check}" ] || fail "Playwright screenshot smoke test did not create an image"
 
 if [ "${WORKSPACE_REQUIRE_GIT_AUTH:-0}" = "1" ]; then
   github_host="${GITHUB_HOST:-github.com}"

@@ -44,6 +44,7 @@ workspace_user="${WORKSPACE_USER:-codex}"
 codex_npm_version="${CODEX_NPM_VERSION:-0.132.0}"
 glab_version="${GLAB_VERSION:-1.99.0}"
 node_major="${NODE_MAJOR:-22}"
+playwright_npm_version="${PLAYWRIGHT_NPM_VERSION:-1.60.0}"
 tz="${TZ:-UTC}"
 
 export DEBIAN_FRONTEND=noninteractive
@@ -104,6 +105,8 @@ if [ "${installed_node_major}" != "${node_major}" ]; then
   sudo apt-get install -y --no-install-recommends nodejs
 fi
 
+npx --yes "playwright@${playwright_npm_version}" install-deps chromium
+
 if ! command -v tailscale >/dev/null 2>&1; then
   curl -fsSL "https://pkgs.tailscale.com/stable/ubuntu/${VERSION_CODENAME}.noarmor.gpg" \
     | sudo tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null
@@ -148,6 +151,11 @@ if [ -f "${HOME}/.ssh/authorized_keys" ]; then
 fi
 
 workspace_home="$(getent passwd "${workspace_user}" | cut -d: -f6)"
+sudo -u "${workspace_user}" env \
+  HOME="${workspace_home}" \
+  npm_config_cache="${workspace_home}/.npm" \
+  npx --yes "playwright@${playwright_npm_version}" install chromium
+
 workspace_repo="${workspace_home}/ai-workflow"
 if [ ! -e "${workspace_repo}" ]; then
   sudo install -d -m 0755 -o "${workspace_user}" -g "${workspace_user}" "${workspace_repo}"

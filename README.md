@@ -70,6 +70,21 @@ Default host layout:
 - `~/workspace/state`: Codex, GitHub CLI, GitLab CLI, SSH, and shell state.
 - `~/workspace/backups`: local backup archives and restore metadata.
 
+## Browser Screenshots
+
+The host bootstrap installs Playwright's Chromium browser and required Ubuntu
+runtime libraries for the workspace user. Codex can use it to verify browser UI
+work from any repo in `~/workspace/repos`.
+
+Example:
+
+```bash
+npx playwright screenshot http://localhost:5173 artifacts/home.png
+```
+
+`scripts/check-workspace.sh` includes a Playwright smoke test that captures a
+small screenshot and fails if Chromium cannot launch.
+
 Gitignored platform-local files:
 
 - `.env`

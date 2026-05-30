@@ -20,6 +20,8 @@ if [ -f .env ]; then
   set +a
 fi
 
+playwright_npm_version="${PLAYWRIGHT_NPM_VERSION:-1.60.0}"
+
 if [ "$(uname -s)" != "Linux" ]; then
   fail "host check must run on the Linux VM host"
 fi
@@ -109,6 +111,7 @@ echo "Git: $(git --version)"
 echo "GitHub CLI: $(gh --version | head -n 1)"
 echo "GitLab CLI: $(glab --version | head -n 1)"
 echo "ACL: $(setfacl --version | head -n 1)"
+echo "Playwright: $(npx --yes "playwright@${playwright_npm_version}" --version)"
 
 if tailscale status >/dev/null 2>&1; then
   echo "Tailscale IPv4: $(tailscale ip -4 2>/dev/null || true)"
